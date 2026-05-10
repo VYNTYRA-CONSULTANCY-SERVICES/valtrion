@@ -12,3 +12,4 @@ chardet
 razorpay
 qrcode[pil]
 pillow
+gunicorn
