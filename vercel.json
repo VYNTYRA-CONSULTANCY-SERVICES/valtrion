@@ -29,9 +29,5 @@
     "FLASK_ENV": "production",
     "VERCEL": "1"
   },
-  "functions": {
-    "wsgi.py": {
-      "maxDuration": 60
-    }
-  }
+  
 }
