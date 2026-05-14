@@ -4,8 +4,8 @@ from app import create_app, db, bcrypt
 from app.models import Service, User
 
 
-DEFAULT_ADMIN_EMAIL = os.environ.get('DEFAULT_ADMIN_EMAIL', 'admin@valtrion.local')
-DEFAULT_ADMIN_PASSWORD = os.environ.get('DEFAULT_ADMIN_PASSWORD', '')
+DEFAULT_ADMIN_EMAIL = os.environ.get('DEFAULT_ADMIN_EMAIL', 'admin@valtrion.com')
+DEFAULT_ADMIN_PASSWORD = os.environ.get('DEFAULT_ADMIN_PASSWORD', 'admin@123')
 DEFAULT_ADMIN_PHONE = os.environ.get('DEFAULT_ADMIN_PHONE', '9876543210')
 DEFAULT_ADMIN_NAME = os.environ.get('DEFAULT_ADMIN_NAME', 'Valtrion Admin')
 

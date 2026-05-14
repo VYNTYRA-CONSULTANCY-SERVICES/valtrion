@@ -10,8 +10,8 @@ auth = Blueprint('auth', __name__)
 
 def _default_admin_credentials():
     return {
-        'email': os.environ.get('DEFAULT_ADMIN_EMAIL', 'admin@valtrion.local'),
-        'password': os.environ.get('DEFAULT_ADMIN_PASSWORD', ''),
+        'email': os.environ.get('DEFAULT_ADMIN_EMAIL', 'admin@valtrion.com'),
+        'password': os.environ.get('DEFAULT_ADMIN_PASSWORD', 'admin@123'),
         'phone': os.environ.get('DEFAULT_ADMIN_PHONE', '9876543210'),
         'name': os.environ.get('DEFAULT_ADMIN_NAME', 'Valtrion Admin'),
     }
