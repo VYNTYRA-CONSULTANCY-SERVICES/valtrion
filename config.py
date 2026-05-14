@@ -56,12 +56,12 @@ class Config:
     # For development and build environments, use a temporary key
     # In production, SECRET_KEY must be explicitly set via environment variable
     if not SECRET_KEY:
-        if FLASK_ENV == 'production':
+        if FLASK_ENV == 'production' and os.environ.get('VERCEL') != '1':
             raise ValueError(
                 "SECRET_KEY environment variable is not set. "
                 "Please set it for production security."
             )
-        # Development/build: use a temporary key
+        # Development/build/Vercel: use a temporary key so the app can boot
         SECRET_KEY = 'dev-temporary-key-change-in-production'
     
     # Database Configuration
