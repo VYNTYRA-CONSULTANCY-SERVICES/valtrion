@@ -28,6 +28,5 @@
   "env": {
     "FLASK_ENV": "production",
     "VERCEL": "1"
-  },
-  
+  }
 }
