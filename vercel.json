@@ -14,7 +14,7 @@
   "routes": [
     {
       "src": "/static/(.*)",
-      "dest": "/static/$1",
+      "dest": "/app/static/$1",
       "headers": {
         "cache-control": "public, max-age=3600"
       }
@@ -30,3 +30,4 @@
     "VERCEL": "1"
   }
 }
+
