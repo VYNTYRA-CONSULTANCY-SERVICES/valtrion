@@ -143,3 +143,7 @@ def _register_error_handlers(app):
             'Review': Review,
             'ChatMessage': ChatMessage
         }
+
+
+# Create app instance for WSGI servers (gunicorn app:app, Render, etc.)
+app = create_app()
