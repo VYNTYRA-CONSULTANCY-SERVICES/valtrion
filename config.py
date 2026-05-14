@@ -53,11 +53,16 @@ class Config:
     
     # Security
     SECRET_KEY = os.environ.get('SECRET_KEY')
+    # For development and build environments, use a temporary key
+    # In production, SECRET_KEY must be explicitly set via environment variable
     if not SECRET_KEY:
-        raise ValueError(
-            "SECRET_KEY environment variable is not set. "
-            "Please set it for production security."
-        )
+        if FLASK_ENV == 'production':
+            raise ValueError(
+                "SECRET_KEY environment variable is not set. "
+                "Please set it for production security."
+            )
+        # Development/build: use a temporary key
+        SECRET_KEY = 'dev-temporary-key-change-in-production'
     
     # Database Configuration
     SQLALCHEMY_DATABASE_URI = _database_uri()

@@ -35,7 +35,6 @@ services:
     # Build command
     buildCommand: |
       pip install -r requirements.txt
-      python seed.py
     
     # Start command
     startCommand: gunicorn -k eventlet -w 1 --bind 0.0.0.0:$PORT wsgi:app
