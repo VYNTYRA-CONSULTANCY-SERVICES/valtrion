@@ -73,7 +73,7 @@ def send_booking_emails(booking_record, service):
             "For any queries, reply to this email or call us at +91 9686681036.\n\n"
             "Best regards,\n"
             "Valtrion Car Services\n"
-            "valtrionbookings@gmail.com | +91 9686681036"
+            f"{sender_email} | +91 9686681036"
         )
         try:
             msg = Message(
@@ -294,7 +294,7 @@ def download_invoice(booking_id):
     <div class="total"><span>Total Amount</span><span>Rs. {int(booking_record.total_amount)}</span></div>
     <div style="text-align:center;margin-top:30px;color:#999;font-size:12px;line-height:1.8;">
     <strong style="color:#0066FF;">VALTRION Automotive Services</strong><br>
-    valtrionbookings@gmail.com | +91 9686681036<br>
+    support@valtrion.local | +91 9686681036<br>
     30-Day Service Warranty | Transparent Pricing<br>Thank you for choosing Valtrion!</div>
     </body></html>"""
     response = make_response(html)

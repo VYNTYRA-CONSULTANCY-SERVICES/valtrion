@@ -1,5 +1,13 @@
+import os
+
 from app import create_app, db, bcrypt
 from app.models import Service, User
+
+
+DEFAULT_ADMIN_EMAIL = os.environ.get('DEFAULT_ADMIN_EMAIL', 'admin@valtrion.local')
+DEFAULT_ADMIN_PASSWORD = os.environ.get('DEFAULT_ADMIN_PASSWORD', '')
+DEFAULT_ADMIN_PHONE = os.environ.get('DEFAULT_ADMIN_PHONE', '9876543210')
+DEFAULT_ADMIN_NAME = os.environ.get('DEFAULT_ADMIN_NAME', 'Valtrion Admin')
 
 app = create_app()
 with app.app_context():
@@ -33,18 +41,18 @@ with app.app_context():
         db.session.bulk_save_objects(services)
         print("Added " + str(len(services)) + " services!")
 
-    if not User.query.filter_by(email='valtrionbookings@gmail.com').first():
+    if DEFAULT_ADMIN_PASSWORD and not User.query.filter_by(email=DEFAULT_ADMIN_EMAIL).first():
         admin = User(
-            name='Valtrion Admin',
-            email='valtrionbookings@gmail.com',
-            phone='9876543210',
-            password=bcrypt.generate_password_hash('valtrion@123').decode('utf-8'),
+            name=DEFAULT_ADMIN_NAME,
+            email=DEFAULT_ADMIN_EMAIL,
+            phone=DEFAULT_ADMIN_PHONE,
+            password=bcrypt.generate_password_hash(DEFAULT_ADMIN_PASSWORD).decode('utf-8'),
             role='admin'
         )
         db.session.add(admin)
         print("Admin created!")
-        print("Email: valtrionbookings@gmail.com")
-        print("Password: valtrion@123")
+        print(f"Email: {DEFAULT_ADMIN_EMAIL}")
+        print("Password: provided via environment")
 
     db.session.commit()
     print("Database seeded successfully!")

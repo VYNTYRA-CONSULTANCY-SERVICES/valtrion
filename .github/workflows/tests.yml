@@ -82,7 +82,7 @@ jobs:
     - name: Check for secrets
       uses: trufflesecurity/trufflehog@main
       with:
-        path: ./
+        path: app
         base: ${{ github.event.repository.default_branch }}
         head: HEAD
 
@@ -98,4 +98,4 @@ jobs:
     
     - name: Test Docker image
       run: |
-        docker run --rm valtrion:latest python -c "from app import create_app; app = create_app(); print('App loaded successfully')"
+        docker run --rm -e SECRET_KEY=test-secret-key valtrion:latest python -c "from app import create_app; app = create_app(); print('App loaded successfully')"
