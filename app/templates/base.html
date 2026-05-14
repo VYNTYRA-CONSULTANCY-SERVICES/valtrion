@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VALTRION - Expert Care for Every Car</title>
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='logos/valtrion-icon.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='app/static/logos/valtrion-icon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -248,7 +248,7 @@
 </head>
 <body>
 <nav>
-    <a href="{{ url_for('main.index') }}" class="nav-logo"><img src="{{ url_for('static', filename='logos/valtrion-icon.svg') }}" alt="Valtrion">VAL<span>T</span>RION</a>
+    <a href="{{ url_for('main.index') }}" class="nav-logo"><img src="{{ url_for('static', filename='app/static/logos/valtrion-icon.svg') }}" alt="Valtrion">VAL<span>T</span>RION</a>
     <button class="nav-menu-btn" onclick="toggleNavMenu()"><i class="fa fa-bars"></i></button>
     <div class="nav-links" id="nav-links">
         <a href="{{ url_for('main.index') }}">Home</a>
