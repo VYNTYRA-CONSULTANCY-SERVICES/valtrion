@@ -1,0 +1,82 @@
+# Render.com Deployment Configuration
+# https://render.com/docs/deploy-flask
+
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: valtrion-postgres
+    env: python
+    plan: starter
+    region: oregon
+    preDeployCommand: |
+      # Create database if needed
+    envVars:
+      - key: POSTGRES_DB
+        value: valtrion
+      - key: POSTGRES_USER
+        value: valtrion_user
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: valtrion
+          property: connectionString
+
+  # Flask Web Service
+  - type: web
+    name: valtrion
+    env: python
+    plan: starter
+    region: oregon
+    repo: https://github.com/NivedithaDevang/valtrion.git
+    branch: main
+    runtime: python-3.11
+    
+    # Build command
+    buildCommand: |
+      pip install -r requirements.txt
+      python seed.py
+    
+    # Start command
+    startCommand: gunicorn -k eventlet -w 1 --bind 0.0.0.0:$PORT wsgi:app
+    
+    # Environment variables
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromService:
+          name: valtrion-postgres
+          type: pserv
+          property: connectionString
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE
+        sync: false
+    
+    # Health check
+    healthCheckPath: /
+    
+    # Auto-deploy on push
+    autoDeploy: true
+    
+    # Build cache enabled
+    buildCache: enabled
+    
+    # Disk size
+    disk:
+      name: valtrion-data
+      mountPath: /var/app/data
+      sizeGB: 1

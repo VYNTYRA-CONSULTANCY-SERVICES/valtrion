@@ -1,0 +1,77 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install Wrangler
+      run: npm install -g @cloudflare/wrangler
+    
+    - name: Deploy Workers
+      run: wrangler deploy
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    
+    - name: Deploy to Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: valtrion
+        directory: public
+        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Verify deployment
+      run: |
+        sleep 10
+        status=$(curl -s -o /dev/null -w "%{http_code}" https://api.valtrion.com/api/hello)
+        if [ $status -eq 200 ]; then
+          echo "✅ Cloudflare deployment successful"
+        else
+          echo "❌ Cloudflare deployment verification failed: $status"
+          exit 1
+        fi
+
+  purge-cache:
+    runs-on: ubuntu-latest
+    needs: deploy
+    
+    steps:
+    - name: Purge Cloudflare cache
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const https = require('https');
+          const token = '${{ secrets.CLOUDFLARE_API_TOKEN }}';
+          const zoneId = '${{ secrets.CLOUDFLARE_ZONE_ID }}';
+          
+          const options = {
+            hostname: 'api.cloudflare.com',
+            path: `/client/v4/zones/${zoneId}/purge_cache`,
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          };
+          
+          const req = https.request(options, (res) => {
+            console.log(`Cache purge status: ${res.statusCode}`);
+          });
+          
+          req.write(JSON.stringify({ purge_everything: true }));
+          req.end();

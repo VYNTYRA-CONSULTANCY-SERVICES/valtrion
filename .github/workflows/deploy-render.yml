@@ -1,0 +1,44 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Render
+      run: |
+        # Render automatically deploys on git push
+        # This workflow is for notifications/verification
+        echo "Deployment triggered to Render"
+        echo "Check Render dashboard for deployment status"
+    
+    - name: Verify deployment
+      run: |
+        sleep 30
+        for i in {1..5}; do
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://valtrion.onrender.com/api/hello)
+          if [ $status -eq 200 ]; then
+            echo "✅ Deployment successful"
+            exit 0
+          fi
+          echo "Attempt $i: Status $status, retrying..."
+          sleep 10
+        done
+        echo "❌ Deployment verification failed"
+        exit 1
+    
+    - name: Slack notification
+      if: always()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: 'Render deployment ${{ job.status }}'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        fields: repo,message,commit,author

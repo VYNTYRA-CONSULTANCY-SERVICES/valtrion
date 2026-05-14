@@ -23,30 +23,12 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-from datetime import datetime, date, timedelta, timezone, timedelta as td
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-from functools import wraps
-
-admin = Blueprint('admin', __name__)
-try:
-    IST = ZoneInfo('Asia/Kolkata')
-except ZoneInfoNotFoundError:
-    IST = timezone(td(hours=5, minutes=30))
-
 
 def _format_chat_time(dt):
+    """Format chat message timestamp to IST."""
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return dt.astimezone(IST).strftime('%I:%M %p')
-
-def admin_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role != 'admin':
-            flash('Admin access required.', 'danger')
-            return redirect(url_for('auth.login'))
-        return f(*args, **kwargs)
-    return decorated
 
 # ========== DASHBOARD ==========
 @admin.route('/')

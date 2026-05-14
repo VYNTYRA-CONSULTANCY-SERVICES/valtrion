@@ -1,3 +1,66 @@
+# Cloudflare Workers & Pages Configuration
+# https://developers.cloudflare.com/workers/
+# IMPORTANT: Replace YOUR_CLOUDFLARE_ACCOUNT_ID with your account ID
+# IMPORTANT: Replace YOUR_CLOUDFLARE_ZONE_ID with your zone ID
+# Get these values from: https://dash.cloudflare.com/
+
 name = "valtrion"
-compatibility_date = "2026-05-03"
+type = "javascript"
+account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"  # Replace with your account ID
+workers_dev = true
+route = "api.valtrion.workers.dev"
+zone_id = "YOUR_CLOUDFLARE_ZONE_ID"  # Replace with your zone ID
+
+# Compatibility settings
+compatibility_date = "2026-05-14"
+compatibility_flags = ["nodejs_compat"]
+
+# Build configuration
+build = { command = "npm run build", cwd = ".", watch_paths = ["src/**/*.ts"] }
+
+# Environment variables - add in Cloudflare Dashboard
+env.production.vars = { ENVIRONMENT = "production" }
+env.staging.vars = { ENVIRONMENT = "staging" }
+env.development.vars = { ENVIRONMENT = "development" }
+
+# KV Namespaces for caching and data
+kv_namespaces = [
+  { binding = "CACHE", id = "YOUR_KV_NAMESPACE_ID", preview_id = "YOUR_PREVIEW_ID" },
+  { binding = "SESSIONS", id = "YOUR_SESSIONS_ID", preview_id = "YOUR_SESSIONS_PREVIEW_ID" }
+]
+
+# Durable Objects for real-time features
+durable_objects.bindings = [
+  { name = "CHAT_HANDLER", class_name = "ChatHandler", script_name = "valtrion-chat" }
+]
+
+# Analytics Engine
+analytics_engine_datasets = ["events"]
+
+# Logpush for real-time logs
+logpush = true
+
+# Rate limiting
+triggers.crons = ["0 0 * * *"]  # Daily at midnight UTC
+
+# Security - CORS headers
+routes = [
+  { pattern = "api.valtrion.com/api/*", custom_domain = true },
+  { pattern = "valtrion.workers.dev/*" }
+]
+
+# Performance
+limits = { cpu_ms = 50 }
+
+# Custom domain setup (replace with your domain)
+[env.production]
+route = "api.valtrion.com/api/*"
+zone_id = "YOUR_CLOUDFLARE_ZONE_ID"
+custom_domain = true
+
+[env.staging]
+route = "staging-api.valtrion.com/*"
+
+# Pages configuration (for static frontend)
 pages_build_output_dir = "public"
+site.start_path = "/"
